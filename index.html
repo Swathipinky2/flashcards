@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cute Vocabulary Flashcards</title>
+  <style>
+    /* Your CSS styles here */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1a1a1a; /* Dark grey */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #ffffff; /* White */
+    }
+    .container {
+      text-align: center;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .button-container button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #ff8000; /* Orange */
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .button-container button:hover {
+      background-color: #cc6600; /* Darker orange */
+    }
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #333333; /* Dark grey */
+      margin-bottom: 10px;
+      width: 200px;
+      background-color: #333333; /* Dark grey */
+      color: #ffffff; /* White */
+    }
+    .message-box {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .error-message {
+      color: #ff3333; /* Red */
+      font-weight: bold;
+    }
+    .flashcard {
+      width: 300px;
+      height: 200px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      margin: 0 auto 20px auto;
+      background-color: #4d4d4d; /* Dark grey */
+      display: none;
+      color: #ffffff; /* White */
+    }
+    .flashcard h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #ffffff; /* White */
+    }
+    .flashcard p {
+      font-size: 18px;
+      color: #ffffff; /* White */
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="message-box">
+    <span id="errorMessage" class="error-message"></span>
+  </div>
+
+  <div class="button-container">
+    <input type="text" id="wordInput" placeholder="Enter a word" onkeypress="handleKeyPress(event, 'word')">
+    <input type="text" id="meaningInput" placeholder="Enter its meaning" onkeypress="handleKeyPress(event, 'meaning')">
+    <br>
+    <button onclick="saveVocabulary()">Save Vocabulary</button>
+    <button onclick="showFlashcards()">Show Flashcards</button>
+    <button onclick="deleteAllFlashcards()">Delete All Flashcards</button>
+  </div>
+
+  <div class="flashcard" id="flashcard">
+    <h2 id="word"></h2>
+    <p id="meaning"></p>
+  </div>
+</div>
+
+<script>
+  let vocabulary = [];
+
+  function saveVocabulary() {
+    const word = document.getElementById('wordInput').value.trim();
+    const meaning = document.getElementById('meaningInput').value.trim();
+    
+    if (word && meaning) {
+      vocabulary.push({ word, meaning });
+      document.getElementById('wordInput').value = '';
+      document.getElementById('meaningInput').value = '';
+      document.getElementById('wordInput').focus();
+      displayMessage('Vocabulary saved!', false);
+    } else {
+      displayMessage('Please enter both word and meaning!', true);
+    }
+  }
+
+  function showFlashcards() {
+    if (vocabulary.length === 0) {
+      displayMessage('No vocabulary words saved yet!', true);
+      return;
+    }
+
+    const flashcardContainer = document.getElementById('flashcard');
+    const flashcardIndex = Math.floor(Math.random() * vocabulary.length);
+    const currentFlashcard = vocabulary[flashcardIndex];
+    
+    flashcardContainer.innerHTML = `
+      <h2>${currentFlashcard.word}</h2>
+      <p>${currentFlashcard.meaning}</p>
+    `;
+    flashcardContainer.style.backgroundColor = getRandomColor();
+    flashcardContainer.style.display = 'flex';
+  }
+
+  function deleteAllFlashcards() {
+    vocabulary = [];
+    displayMessage('All flashcards deleted!', false);
+  }
+
+  function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+  function handleKeyPress(event, fieldType) {
+    if (event.key === 'Enter') {
+      switch (fieldType) {
+        case 'word':
+          document.getElementById('meaningInput').focus();
+          break;
+        case 'meaning':
+          saveVocabulary();
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  function displayMessage(message, isError) {
+    const errorMessageElement = document.getElementById('errorMessage');
+    errorMessageElement.textContent = message;
+
+    if (isError) {
+      errorMessageElement.style.display = 'block';
+    } else {
+      errorMessageElement.style.display = 'none';
+    }
+  }
+</script>
+</body>
+</html>
+
