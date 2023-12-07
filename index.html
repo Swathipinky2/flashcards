@@ -70,17 +70,17 @@
       margin: 0 auto 20px auto;
       background-color: #4d4d4d; /* Dark grey */
       display: none;
-      color: #ffffff; /* White */
+      color: #000000; /* Black */
     }
     .flashcard h2 {
       font-size: 24px;
       margin-bottom: 10px;
       font-weight: bold;
-      color: #ffffff; /* White */
+      color: #000000; /* Black */
     }
     .flashcard p {
       font-size: 18px;
-      color: #ffffff; /* White */
+      color: #000000; /* Black */
     }
   </style>
 </head>
@@ -107,17 +107,17 @@
 </div>
 
 <script>
-  let vocabulary = [];
+  // Retrieve stored vocabulary from browser storage on page load
+  let vocabulary = JSON.parse(localStorage.getItem('flashcards')) || [];
 
   function saveVocabulary() {
     const word = document.getElementById('wordInput').value.trim();
     const meaning = document.getElementById('meaningInput').value.trim();
-    
+
     if (word && meaning) {
       vocabulary.push({ word, meaning });
-      document.getElementById('wordInput').value = '';
-      document.getElementById('meaningInput').value = '';
-      document.getElementById('wordInput').focus();
+      updateStorage();
+      clearInputs();
       displayMessage('Vocabulary saved!', false);
     } else {
       displayMessage('Please enter both word and meaning!', true);
@@ -133,7 +133,7 @@
     const flashcardContainer = document.getElementById('flashcard');
     const flashcardIndex = Math.floor(Math.random() * vocabulary.length);
     const currentFlashcard = vocabulary[flashcardIndex];
-    
+
     flashcardContainer.innerHTML = `
       <h2>${currentFlashcard.word}</h2>
       <p>${currentFlashcard.meaning}</p>
@@ -144,7 +144,12 @@
 
   function deleteAllFlashcards() {
     vocabulary = [];
+    updateStorage();
     displayMessage('All flashcards deleted!', false);
+  }
+
+  function updateStorage() {
+    localStorage.setItem('flashcards', JSON.stringify(vocabulary));
   }
 
   function getRandomColor() {
@@ -154,6 +159,12 @@
       color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
+  }
+
+  function clearInputs() {
+    document.getElementById('wordInput').value = '';
+    document.getElementById('meaningInput').value = '';
+    document.getElementById('wordInput').focus();
   }
 
   function handleKeyPress(event, fieldType) {
@@ -182,6 +193,6 @@
     }
   }
 </script>
+
 </body>
 </html>
-
